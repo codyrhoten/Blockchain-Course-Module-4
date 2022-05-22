@@ -1,0 +1,7 @@
+node_modules/
+**log
+venv/*
+*.zip
+*.pdf
+*.png
+etherwallet-v3.40.0/
