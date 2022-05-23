@@ -1,5 +1,5 @@
-//const helpers = require("./helpers.js");
-let PublicArticle = artifacts.require("PublicArticle");
+const helpers = require('./helpers.js');
+let PublicArticle = artifacts.require('PublicArticle');
 
 contract('PublicArticle', function(accounts) {
     let instance;
@@ -34,13 +34,32 @@ contract('PublicArticle', function(accounts) {
         assert.equal(text, 'Article Text Here');
     });
 
-    /* it(
+    it(
         "doesn't get the article name after time limit is up", 
         async () => {
-            const minuteLimit = await instance.setDuration(60);
+            let minute = 60;
+            let timeAfter = 0;
+            let timeDuring = 0;
+            await instance.setDuration(minute);
+
             await web3.eth.getBlock('latest').then(function(block) {
-                time
-            })
+                timeDuring = block.timestamp;
+            });
+            await helpers.timeTravel(web3, minute + 1);
+            await web3.await.eth.getBlock('latest').then(function(block) {
+                timeAfter = block.timestamp;
+            });
+
+            assert.isAbove(timeAfter - timeDuring, minute);
         }
-    ); */
-})
+    );
+
+    it(
+        'should not get the article name if the duration has not been set',
+        async () => {
+            assert.throws(function() {
+                instance.getArticleName();
+            });
+        }
+    );
+});
