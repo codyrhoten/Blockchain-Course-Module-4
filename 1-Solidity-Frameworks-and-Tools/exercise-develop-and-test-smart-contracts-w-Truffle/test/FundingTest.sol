@@ -7,12 +7,25 @@ import '../contracts/Funding.sol';
 import 'truffle/DeployedAddresses.sol';
 
 contract FundingTest {
+    uint public initialBalance = 10 ether;
+
+    function testTrackingDonatorsBalance() public {
+        Funding funding = new Funding();
+        funding.donate{value: 5000000 gwei}();
+        funding.donate{value: 15000000 gwei}();
+        Assert.equal(
+            funding.balances(address(this)), 
+            20000000 gwei, 
+            'Donator balance is different from donations'
+        );
+    }
+
     function testAcceptingDonations() public {
         Funding funding = new Funding();
         Assert.equal(
             funding.raised(), 
             0, 
-            'Initial raised amonut is different from 0'
+            'Initial raised amount is different from 0'
         );
 
         funding.donate{value: 10000000 gwei}();
