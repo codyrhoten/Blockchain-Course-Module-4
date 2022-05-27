@@ -15,6 +15,18 @@ contract('Funding', async (accounts) => {
         funding = await Funding.new(DAY);
     });
 
+    it('does not allow for donations when time is up', async () => {
+        await funding.donate({ from: firstAccount, value: 10000000 * GWEI });
+        await utils.timeTravel(web3, DAY);
+        
+        try {
+            await funding.donate({ from: firstAccount, value: 10000000 * GWEI });
+            assert.fail();
+        } catch (err) {
+            assert.ok(/revert/.test(err.message));
+        }
+    });
+
     it('finishes fundraising when time is up', async () => {
         assert.equal(await funding.isFinished.call(), false);
         await utils.timeTravel(web3, DAY);

@@ -16,6 +16,14 @@ contract FundingTest {
         funding = new Funding(1 days);
     }
 
+    function testDonatingAfterTimeIsUp() public {
+        Funding newFund = new Funding(0);
+        bytes memory bs = abi.encodePacked((keccak256('donate()')));
+
+        (bool result,) = address(newFund).call{value: 100000000 gwei}(bs);
+        Assert.equal(result, false, 'Allows for donations when time is up');
+    }
+
     function testTrackingDonatorsBalance() public {
         funding.donate{value: 5000000 gwei}();
         funding.donate{value: 15000000 gwei}();

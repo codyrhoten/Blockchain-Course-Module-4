@@ -13,11 +13,16 @@ contract Funding {
         finishesAt = block.timestamp + _duration;
     }
 
+    modifier onlyNotFinished() {
+        require(!isFinished());
+        _;
+    }
+
     function isFinished() public view returns (bool) {
         return finishesAt <= block.timestamp;
     }
 
-    function donate() public payable {
+    function donate() public payable onlyNotFinished {
         balances[msg.sender] += msg.value;
         raised += msg.value;
     }
