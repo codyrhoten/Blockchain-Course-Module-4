@@ -13,7 +13,7 @@ contract FundingTest {
     receive() external payable {}
 
     function beforeEach() public {
-        funding = new Funding(1 days);
+        funding = new Funding(1 days, 100000000 gwei);
     }
 
     function testDonatingAfterTimeIsUp() public {
