@@ -16,8 +16,51 @@ contract FundingTest {
         funding = new Funding(1 days, 100000000 gwei);
     }
 
+    function testWithdrawalByOwner() public {
+        uint initBalance = address(this).balance;
+        funding.donate{value: 50000000 gwei}();
+
+        bytes memory bs = abi.encodePacked((keccak256('withdraw()')));
+        (bool result,) = address(funding).call(bs);
+        Assert.equal(result, false, 'Allows for withdrawal before reaching the goal');
+
+        funding.donate{value: 50000000 gwei}();
+        Assert.equal(
+            address(this).balance,
+            initBalance - 100000000 gwei,
+            "Balance before withdrawal doesn't correspond to sum of donations"
+        );
+
+        bs = abi.encodePacked((keccak256('withdraw()')));
+        (result,) = address(funding).call(bs);
+        Assert.equal(
+            result, 
+            true, 
+            'Does not allow for withdrawal after reaching the goal'
+        );
+        Assert.equal(
+            address(this).balance,
+            initBalance,
+            "Balance after withdrawal doesn't correspond to sum of donations"
+        );
+    }
+
+    function testWithdrawalByNotOwner() public {
+        // Make sure to check what goal is set in migration (default: 100000000 gwei)
+        funding = Funding(DeployedAddresses.Funding());
+        funding.donate{value: 100000000 gwei}();
+
+        bytes memory bs = abi.encodePacked((keccak256('withdraw()')));
+        (bool result,) = address(funding).call(bs);
+        Assert.equal(
+            result,
+            false,
+            'Does not allow withdrawal if account is not the contract owner'
+        );
+    }
+
     function testDonatingAfterTimeIsUp() public {
-        Funding newFund = new Funding(0);
+        Funding newFund = new Funding(0, 100000000 gwei);
         bytes memory bs = abi.encodePacked((keccak256('donate()')));
 
         (bool result,) = address(newFund).call{value: 100000000 gwei}(bs);
