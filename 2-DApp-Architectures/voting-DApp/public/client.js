@@ -248,7 +248,29 @@ $(document).ready(function () {
     }
 
     async function vote(candidateIndex, candidateName) {
-        //TODO:
+        try {
+            let jsonWallet = sessionStorage['jsonWallet'];
+            let walletPassword = prompt('Enter your wallet password:');
+            let wallet = await ethers.Wallet.fromEncryptedJson(
+                jsonWallet, 
+                walletPassword, 
+                showProgressBox
+            );
+            let privateKey = wallet.privateKey;
+            const votingContract = new ethers.Contract(
+                votingContractAddress,
+                votingContractABI,
+                new ethers.Wallet(privateKey, ethereumProvider)
+            );
+            let votingResult = await votingContract.vote(candidateIndex);
+            let tranHash = votingResult.hash;
+            showInfo(`Voted successfully for: ${candidateName}. ` +
+                `See the transaction: <a href="https://ropsten.etherscan.io/tx/${tranHash}" target="_blank">${tranHash}</a>`);
+        } catch (err) {
+            showError(err);
+        } finally {
+            hideProgressProgress();
+        }
     }
 
     function logout() {
