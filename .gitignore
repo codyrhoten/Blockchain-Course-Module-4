@@ -4,4 +4,5 @@ venv/*
 *.zip
 *.pdf
 *.png
+*.mp4
 etherwallet-v3.40.0/

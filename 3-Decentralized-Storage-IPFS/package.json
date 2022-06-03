@@ -1,0 +1,20 @@
+{
+  "name": "3-decentralized-storage-ipfs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ipfs-http-client": "^33.1.0",
+    "node": "^17.7.2",
+    "npm": "^8.12.1"
+  },
+  "devDependencies": {
+    "@babel/helper-compilation-targets": "^7.18.2"
+  }
+}
