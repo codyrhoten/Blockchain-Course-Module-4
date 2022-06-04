@@ -1,0 +1,29 @@
+// open https://www.etherscan.io/
+
+await ethereum.request({ method: 'eth_requestAccounts' });
+
+try {
+  const transactionHash = await ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [
+      {
+        to: '0xd694F3928A1B8a6e965A5fB54dcAD1e3FaE0aD48',
+        'from': '0x2824d0AADD27e32eb5aD0CE2f24C4F408e4FFa67',
+        value: '0x1',
+        // And so on...
+      },
+    ],
+  });
+  // Handle the result
+  console.log(transactionHash);
+} catch (error) {
+  console.error(error);
+}
+
+
+
+await ethereum.request({
+	method: 'eth_getBalance', 
+	params:["0x2824d0aadd27e32eb5ad0ce2f24c4f408e4ffa67"]
+})
+

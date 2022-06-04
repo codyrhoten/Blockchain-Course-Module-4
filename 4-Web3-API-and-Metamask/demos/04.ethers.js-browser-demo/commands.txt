@@ -1,0 +1,25 @@
+// Open https://remix.ethereum.org/
+
+await window.ethereum.enable()
+const provider = new _ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
+
+await provider.listAccounts();
+await provider.getBalance('ACCOUNT_ADDRESS');
+
+const contractAddress = 'CONTRACT_ADDRESS';
+const contractABI = [
+	{"constant": false,"inputs": [{"internalType": "uint256","name": "x","type": "uint256"}],"name": "set","outputs": [],"payable": false,"stateMutability": "nonpayable","type": "function"},{"constant": true,"inputs": [],"name": get",
+	"outputs": [{"internalType": "uint256","name": "","type": "uint256"}],
+	"payable": false,"stateMutability": "view","type": "function"}]
+
+
+// pass a provider when initiating a contract for read only queries
+let contractReadOnly = new _ethers.Contract(contractAddress, contractABI, provider);
+let valueReadOnly = await contractReadOnly.get();
+
+// pass a signer to create a contract instance for state changing operations
+const signer = provider.getSigner();
+let contract = new _ethers.Contract(contractAddress, contractABI, signer);
+await contract.set(7);
+let value = await contract.get();

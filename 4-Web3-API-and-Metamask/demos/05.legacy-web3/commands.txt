@@ -1,0 +1,50 @@
+You can play with it using the resources provided with exercise-decentralized-document-registry-metamask-ipfs
+
+npm install
+npm start
+
+Open address "localhost:3000" in the browser, the MetaMask will appear and ask to connect.
+
+In browser console:
+
+if (window.ethereum) {
+        window.web3 = new Web3(ethereum);
+        try {
+            // Request account access if needed
+            await ethereum.enable();
+        } catch (error) {
+            // User denied account access...
+        }
+}
+
+
+
+web3.eth.getBalance(
+  "YOUR_ADDRESS",
+  (err, result) => {
+    console.log(result.toString(10))
+  }
+);
+
+
+
+const contractAddress = '0x7f6757d662dd6391ee76de4dd7823bfbaa23110e';
+const contractABI = [{"constant":false,"inputs":[{"name":"x","type":"uint256"}],"name":"set","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"get","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]
+let contract = web3.eth.contract(contractABI).at(contractAddress);
+contract.get(function(err, res) {
+	if (err) return err;
+	console.log(res.toNumber());
+});
+
+
+
+
+contract.set(42, function(err, txHash) {
+	if (err) console.log(err);
+	console.log('TX Hash: https://ropsten.etherscan.io/tx/' + txHash);
+});
+
+
+
+
+
