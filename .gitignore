@@ -6,3 +6,4 @@ venv/*
 *.png
 *.mp4
 etherwallet-v3.40.0/
+build/*

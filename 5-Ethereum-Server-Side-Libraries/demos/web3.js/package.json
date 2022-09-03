@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "01_example.js",
-  "dependencies": {},
   "devDependencies": {
     "web3": "^2.0.0-alpha"
   },
