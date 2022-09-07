@@ -13,4 +13,19 @@ contract Voting {
         require(validCandidate(candidate), 'Must be valid candidate');
         return votesReceived[keccak256(bytes (candidate))];
     }
+
+    function voteForCandidate(string memory candidate) public {
+        require(validCandidate(candidate), 'Must be valid candidate');
+        votesReceived[keccak256(bytes (candidate))] += 1;
+    }
+
+    function validCandidate(string memory candidate) public view returns (bool) {
+        for (uint i = 0; i < candidateList.length; i++) {
+            if (keccak256(bytes (candidateList[i])) == keccak256(bytes (candidate))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
