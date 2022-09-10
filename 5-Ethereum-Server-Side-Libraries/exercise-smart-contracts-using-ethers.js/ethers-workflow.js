@@ -31,11 +31,12 @@ function compileContract(fileName, contractName) {
 }
 
 const privateKey = '109ed597e869eb1f3cb5b0e4d23553f0187b51a7a8a4ae1108094e9ffc08b061';
+// const privateKey = 'ece15dbdad2749bebbd64ac06940c161685fbde2e12fe63172931bcf5ee4721a';
+const contractAddress = '0xe6919f8ff6edb9a1f165eb44904bfb04d2b591c3';
 
 (async() => {
     console.log('\nCOMPILING CONTRACT');
     const compiledContract = compileContract('./ArrayOfFacts.sol', "ArrayOfFacts");
-    console.log(compiledContract);
     const abi = compiledContract.abi;
 
     /* console.log('\nDEPLOYING CONTRACT');
@@ -48,13 +49,18 @@ const privateKey = '109ed597e869eb1f3cb5b0e4d23553f0187b51a7a8a4ae1108094e9ffc08
     await contract.deployed();
     console.log(contract.address); */
     
-    let contractAddress = '0xE6919F8Ff6EDb9A1f165EB44904bfb04d2B591c3'
 
-    console.log('\nADDING A FACT');
+    /* console.log('\nADDING A FACT');
     let fact = 'The Times 03/Jan/2009 Chancellor on brink of second bailout for the banks!';
     let tx = await addFact(privateKey, abi, contractAddress, fact);
     console.log('\nWAITING FOR TRANSACTION TO BE MINED');
-    await tx.wait();
+    await tx.wait(); */
+
+    console.log('\nGETTING FACT');
+    await getFact(privateKey, abi, contractAddress, 0);
+
+    console.log('\nGETTING FACTS COUNT');
+    await getFactsCount(provider, abi, contractAddress);
 })();
 
 
@@ -71,14 +77,38 @@ function deployContract(privateKey, fileName, contractName) {
         console.log('Contract address: ' + contract.address);
         return contract;
     });
+}
 
-    function addFact(privateKey, abi, contractAddress, fact) {
-        let wallet = new ethers.Wallet(privateKey, provider);
-        let contract = new ethers.Contract(contractAddress, abi, wallet);
+function addFact(privateKey, abi, contractAddress, fact) {
+    let wallet = new ethers.Wallet(privateKey, provider);
+    let contract = new ethers.Contract(contractAddress, abi, wallet);
 
-        return contract.add(fact).then(tx => {
-            console.log('Transaction: \n' + tx);
-            return tx;
-        })
-    }
+    return contract.add(
+        fact, 
+        {
+            gasPrice: ethers.utils.parseUnits('100', 'gwei'), 
+            gasLimit: 1000000
+        }
+    )
+        .then(transaction => {
+            console.log('Transaction: \n');
+            console.log(transaction);
+            return transaction;
+        }
+    );
+}
+
+function getFact(privateKey, abi, contractAddress, index) {
+    let contract = new ethers.Contract(contractAddress, abi, provider);
+    return contract.getFact(index).then(_fact => {
+        console.log('Fact ' + ++index + ' : ' + _fact);
+    });
+}
+
+function getFactsCount(provider, abi, contractAddress) {
+    let contract = new ethers.Contract(contractAddress, abi, provider);
+
+    return contract.count().then(count => {
+        console.log(ethers.BigNumber.from(count).toNumber())
+    });
 }
